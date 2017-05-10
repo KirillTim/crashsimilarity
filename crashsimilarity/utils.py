@@ -1,6 +1,7 @@
 import errno
 import json
 import os
+from collections import namedtuple
 from datetime import datetime
 
 from smart_open import smart_open
@@ -15,6 +16,9 @@ def read_files(file_names, open_file_function=smart_open):
         with open_file_function(name) as f:
             for line in f:
                 yield line if isinstance(line, str) else line.decode('utf8')
+
+
+Compressed = namedtuple('Compressed', ['vocab', 'data'])
 
 
 class StackTraceProcessor(object):  # just a namespace, actually
@@ -33,6 +37,23 @@ class StackTraceProcessor(object):  # just a namespace, actually
         if take:
             traces = traces[:take]
         return traces
+
+    @staticmethod
+    def process_compressed(stream, take_top_funcs=None):
+        vocab = dict()
+        already_selected = set()
+        for line in stream:
+            data = json.loads(line)
+            if StackTraceProcessor.should_skip(data['proto_signature']):
+                continue
+            processed = StackTraceProcessor.preprocess(data['proto_signature'], take_top_funcs)
+            for t in processed:
+                if t not in vocab:
+                    vocab[t] = len(vocab)
+            compressed = [str(vocab[i]) for i in processed]
+            if frozenset(compressed) not in already_selected:
+                already_selected.add(frozenset(compressed))
+                yield Compressed(vocab, (compressed, data['signature'].lower()))
 
     @staticmethod
     def process(stream, take_top_funcs=None):
