@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 from gensim import corpora
 
@@ -38,6 +39,7 @@ class DistanceCalculator(object):
         return distances
 
     def fast_wmd(self, words1, words2):
+        logging.root.setLevel(logging.CRITICAL)
         words1 = [w for w in words1 if w in self.model]
         words1 = [str(self.w2pos[w]) for w in words1 if w in self.w2pos]
         words2 = [w for w in words2 if w in self.model]
@@ -64,6 +66,7 @@ class DistanceCalculator(object):
 
         distances = self._create_distance_matrix(dictionary)
 
+        logging.root.setLevel(logging.CRITICAL)
         return emd(bow1, bow2, distances)
 
     @staticmethod
