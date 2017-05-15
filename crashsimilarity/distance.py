@@ -15,6 +15,13 @@ class DistanceCalculator(object):
         self.w2pos = w2pos
         self.dist = dist
 
+    def compressed_words_dist(self, word1, word2):
+        if word1 not in self.w2pos or word2 not in self.w2pos:
+            return -1
+        pos1 = self.w2pos[word1]
+        pos2 = self.w2pos[word2]
+        return self.dist[pos1, pos2]
+
     def fast_rwmd(self, doc1, doc2):
         doc1 = [w for w in doc1 if w in self.model]
         pos1 = [self.w2pos[w] for w in doc1 if w in self.w2pos]
