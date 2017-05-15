@@ -4,6 +4,8 @@
 *.npy
 .DS_Store
 *.json
+.ipynb_checkpoints/
+data/
 crashclustering_data/schema_version
 last_trained.txt
 .coverage
