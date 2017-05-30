@@ -38,6 +38,21 @@ def labels_to_clusters(labels):
     return clusters
 
 
+def predicted_for_group(group, predicted):
+    rv = defaultdict(int)
+    for g in group:
+        for c, points in predicted.items():
+            if g in points:
+                rv[c] += 1
+    return rv
+
+
+def calc_accuracy(predicted, true):
+    total = sum([len(i) for i in predicted.values()])     
+    good = sum([max(predicted_for_group(g, predicted).values() or [0]) for g in true])
+    return good / float(total)
+
+
 def struct_word_dist(w1, w2):
     parts1 = w1.split('::')
     parts2 = w2.split('::')

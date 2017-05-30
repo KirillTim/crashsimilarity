@@ -14,10 +14,11 @@ class Generator(object):
             if t in self._vocab:
                 similar = self._model.most_similar(str(self._vocab[t]))
                 for w, _ in similar:
-                    x = self._pos2vocab[int(w)]
-                    if not x.endswith('________'):
-                        other[i] = x
-                        break
+                    if int(w) in self._pos2vocab:
+                        x = self._pos2vocab[int(w)]
+                        if not x.endswith('________'):
+                            other[i] = x
+                            break
         return other
 
     def generate(self, trace, count=10, percent=0.33):
