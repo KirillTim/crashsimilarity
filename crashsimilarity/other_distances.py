@@ -59,10 +59,8 @@ def struct_word_dist(w1, w2):
     if len(parts1) < len(parts2):
         return struct_word_dist(w2, w1)
     prefix = 0
-    i = 0
-    while i < len(parts2) and i < len(parts1) and parts1[i] == parts2[i]:
+    while prefix < len(parts2) and parts1[prefix] == parts2[prefix]:
         prefix += 1
-        i += 1
     return 1 - float(prefix) / max(len(parts1), len(parts2))
 
 
@@ -95,8 +93,7 @@ def edit_distance2(s1, s2, ins_cost=lambda a, b: 1, del_cost=lambda a, b: 1, sub
     for i, c1 in enumerate(s1):
         current_row = [i + 1]
         for j, c2 in enumerate(s2):
-            insertions = previous_row[j + 1] + ins_cost(s1[i], s2[
-                j])  # j+1 instead of j since previous_row and current_row are one character longer
+            insertions = previous_row[j + 1] + ins_cost(s1[i], s2[j])  # j+1 instead of j since previous_row and current_row are one character longer
             deletions = current_row[j] + del_cost(s2[j], s2[j - 1])  # than s2
             substitutions = previous_row[j] + (c1 != c2) * subst_cost(c1, c2)
             current_row.append(min(insertions, deletions, substitutions))
